@@ -15,6 +15,20 @@
     {:x (+ center-x (* radius (.cos js/Math angle-in-radians)))
      :y (+ center-y (* radius (.sin js/Math angle-in-radians)))}))
 
+(defn describe-link
+  "Build an SVG path that describes a link between two arcs."
+  [x y radius start-angle-1 end-angle-1 start-angle-2 end-angle-2]
+  (let [start-1 (polarToCartesian x y radius end-angle-1)
+        end-1 (polarToCartesian x y radius start-angle-1)
+        start-2 (polarToCartesian x y radius end-angle-2)
+        end-2 (polarToCartesian x y radius start-angle-2)]
+    (clojure.string/join " " ["M" (:x end-1) (:y end-1)
+                              "A" radius radius 0 0 1 (:x start-1) (:y start-1)
+                              "Q" 0 0 (:x end-2) (:y end-2)
+                              "A" radius radius 0 0 1 (:x start-2) (:y start-2)
+                              "Q" 0 0 (:x end-1) (:y end-1)
+                              "Z"])))
+
 (defn describe-arc
   "Build an SVG path that describes a circular arc."
   [x y radius start-angle end-angle]
