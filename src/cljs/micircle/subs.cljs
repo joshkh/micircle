@@ -3,6 +3,16 @@
     (:require [re-frame.core :as re-frame]))
 
 (re-frame/register-sub
- :name
+ :interactors
  (fn [db]
-   (reaction (:name @db))))
+   (reaction (filter #(= "interactor" (:object %)) (:data (:jamiobj @db))))))
+
+(re-frame/register-sub
+  :interactions
+  (fn [db]
+    (reaction (filter #(= "interaction" (:object %)) (:data (:jamiobj @db))))))
+
+(re-frame/register-sub
+  :app-db
+  (fn [db]
+    (reaction @db)))

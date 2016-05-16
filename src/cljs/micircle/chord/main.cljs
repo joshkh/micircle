@@ -28,12 +28,9 @@
                     {:start 0
                      :end (* (:length next) (/ 360 total)) })) [] data )))
 
-(def arc-group
+(def link-group
   (fn []
-    [:g.arc-group
-     ;(for [a (space-around-circle (divide-circle data))]
-     ;  [:path.arc (assoc globals/arc
-     ;               :d (utils/describe-arc 0 0 100 (:start a) (:end a))) ])
+    [:g.link-group
      [:path.link {:d (utils/describe-link 0 0 radius
                                           10 20
                                           130 180)}]
@@ -44,7 +41,14 @@
 
      [:path.link {:d (utils/describe-link 0 0 radius
                                           20 35
-                                          220 290)}]
+                                          220 290)}]]))
+
+(def arc-group
+  (fn []
+    [:g.arc-group
+     ;(for [a (space-around-circle (divide-circle data))]
+     ;  [:path.arc (assoc globals/arc
+     ;               :d (utils/describe-arc 0 0 100 (:start a) (:end a))) ])
      [:path.arc (assoc globals/arc
                   :d (utils/describe-arc 0 0 radius 0 90))]
      [:path.arc (assoc globals/arc
@@ -53,12 +57,20 @@
                   :d (utils/describe-arc 0 0 radius 200 300))]]))
 
 (defn svg []
-  [:svg.micircle
-   [:g.centered (utils/center 500 500)
-    [arc-group]]])
+  (let [interactors (re-frame/subscribe [:interactors])
+        interactions (re-frame/subscribe [:interactions])]
+    (fn []
+      (println "interactors" (count @interactors))
+      (println "interactions" (-> @interactions first :participants count))
+      [:svg.micircle
+      [:g.centered (utils/center 500 500)
+       [link-group]
+       [arc-group]]])))
 
 (defn main []
-  (let [name (re-frame/subscribe [:name])]
-    (fn []
-      [:div
-       [svg]])))
+  (fn []
+    [:div
+     [svg]]))
+
+
+(println "")
