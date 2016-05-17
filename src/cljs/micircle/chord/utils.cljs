@@ -29,20 +29,9 @@
                               "Q" 0 0 (:x end-1) (:y end-1)
                               "Z"])))
 
-(defn describe-arc-new
-  "Build an SVG path that describes a circular arc."
-  [x y radius start-angle end-angle]
-  (let [start     (polar-to-cartesian x y radius end-angle)
-        end       (polar-to-cartesian x y radius start-angle)
-        arc-sweep (if (<= (- end-angle start-angle) 180) 0 1)]
-    (if (< start-angle end-angle)
-      (clojure.string/join " " ["M" (:x start) (:y start)
-                                "A" radius radius 0 arc-sweep 0 (:x end) (:y end)])
-      (clojure.string/join " " ["M" (:x end) (:y end)
-                                "A" radius radius 0 arc-sweep 0 (:x start) (:y start)]))))
-
 (defn describe-arc
-  "Build an SVG path that describes a circular arc."
+  "Build an SVG path that describes a circular arc. Arcs are drawn clockwise
+  or counter-clockwise to remain upright (useful for things like textpaths)."
   [x y radius start-angle end-angle]
   (let [start     (polar-to-cartesian x y radius start-angle)
         end       (polar-to-cartesian x y radius end-angle)]

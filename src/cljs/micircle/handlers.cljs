@@ -70,7 +70,7 @@
       (assoc-in db [:view :defs]
                 (into [] (map (fn [node]
                                 {:id (:interactorRef node)
-                                 :d (utils/describe-arc 0 0 180
+                                 :d (utils/describe-arc 0 0 175
                                                         (:start node)
                                                         (:end node))})
                               nodes))))))

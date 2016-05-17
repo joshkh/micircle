@@ -25,16 +25,22 @@
     (fn []
       (into [:g.arc-group] (map (fn [node]
                                   [:g.arc
+
+                                   ; ARC BODY
                                    [:path
                                     (assoc globals/arc
                                       :d (utils/describe-arc 0 0 radius
                                                                   (:start node)
                                                                   (:end node)))]
+
+                                   ;ARC LABEL
                                    [:text.participant
                                     [:textPath
                                      {:startOffset "50%"
                                       :xlinkHref (str "#" (:interactorRef node))}
                                      (:label node)]]
+
+                                   ; SPACERS
                                    [:line.tick
                                     (let [start (utils/polar-to-cartesian 0 0 (- radius 10) (:start node))
                                           end (utils/polar-to-cartesian 0 0 (+ radius 10) (:start node))]
