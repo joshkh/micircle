@@ -1,2 +1,0 @@
-;; Analyzed by ClojureScript 1.7.228
-{:name micircle.subs, :doc nil, :excludes #{}, :use-macros {reaction reagent.ratom}, :require-macros {reagent.ratom reagent.ratom}, :uses nil, :requires {re-frame re-frame.core, re-frame.core re-frame.core}, :imports nil, :cljs.analyzer/constants {:seen #{:view-nodes :jamiobj :nodes :interactions :interactors :object :app-db :view :data}, :order [:interactors :object :data :jamiobj :interactions :app-db :view-nodes :nodes :view]}}
