@@ -13,8 +13,52 @@
 (re-frame/register-handler
   :handle-data
   (fn [db [_ data]]
+    (re-frame/dispatch [:shape-data])
+    (re-frame/dispatch [:calculate-pieces])
     (re-frame/dispatch [:calculate-view])
     (assoc db :jamiobj data)))
+
+(re-frame/register-handler
+  ; Associate a map of interactors by id to app db
+  :shape-data
+  (fn [db]
+    (assoc db :interactors
+              (reduce (fn [total next]
+                        (assoc total (keyword (:id next)) next))
+                      {}
+                      (butlast (get-in db [:jamiobj :data]))))))
+
+(def padding 0)
+
+(defn space-around-circle [data]
+  (reduce
+    (fn [total next]
+      (if-not (empty? total)
+        (let [my-length (- (:end next) (:start next))]
+          (conj total (assoc next
+                        :start (+ (:end (last total)) padding)
+                        :end (- (+ (:end (last total)) my-length) padding))))
+
+        (conj total next))) [] data))
+
+(defn divide-circle [data]
+  (let [total (reduce + (map (comp js/parseInt :length) data))]
+    (reduce (fn [col next]
+              (conj col
+                    (merge next
+                           {:start 0
+                            :end   (* (:length next) (/ 360 total))}))) [] data)))
+
+(defn space-text [data]
+  (reduce
+    (fn [total next]
+      (conj total (assoc next :text-position (/ (+ (:start next) (:end next)) 2)))) [] data))
+
+
+(re-frame/register-handler
+  :calculate-view
+  (fn [db]
+    (update-in db [:view :nodes] (comp space-text space-around-circle divide-circle))))
 
 (re-frame/register-handler
   :load-data
@@ -24,11 +68,15 @@
     db))
 
 (re-frame/register-handler
-  :calculate-view
+  :calculate-pieces
   (fn [db]
-    (let [interaction (first (filter #(= "interaction" (:object %)) (-> db :jamiobj :data)))
-          participants (:participants interaction)]
-      (doall (for [p participants]
-         (let [ref (:interactorRef p)]
-           (println "ref" ref)))))
-    db))
+    (let [participants (-> db :jamiobj :data last :participants)
+          interactors (:interactors db)]
+      (assoc-in db [:view :nodes]
+                (into []
+                      (map (fn [participant]
+                             (assoc participant :length
+                                                (get-in interactors [(keyword (:interactorRef participant)) :length])
+                                                :label
+                                                (get-in interactors [(keyword (:interactorRef participant)) :label])))
+                           participants))))))

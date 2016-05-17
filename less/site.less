@@ -2,21 +2,63 @@
 
 body {
     color:red;
+    background: #2D2D2D;
+    background: #00aeef;
 }
 
 svg.micircle {
-    width: 500px;
+    // background: #2D2D2D;
+    width: 800px;
     height: 500px;
-    border: 1px solid lightgrey;
 
-    path.arc {
-        fill: none;
-        stroke: skyblue;
-        stroke-width: 20;
+    g.arc {
+
+        path {
+            fill: none;
+            stroke: white;
+            // stroke: yellow;
+            stroke-width: 20;
+        }
+
+        line.tick {
+            stroke-width: 5;
+            stroke: yellow;
+            stroke: #00aeef;
+        }
+
+        text.participant {
+            fill: white;
+            dominant-baseline: central;
+            font-family: Helvetica, Arial, Sans-Serif;
+
+            &.right {
+                text-anchor: start;
+            }
+
+            &.right {
+                text-anchor: end;
+            }
+        }
+
     }
 
     path.link {
-        fill: darkred;
-        opacity: 0.7;
+        fill: white;
+        fill: #72D9FF;
+        opacity: 1;
+        stroke-width: 1px;
+        stroke: #00aeef;
+        stroke-opacity: 0.5;
+
+        &:hover {
+            fill: white;
+            z-index: 999;
+        }
+    }
+
+    line.marker {
+        fill: none;
+        stroke-width: 2px;
+        stroke: hotpink;
     }
 }

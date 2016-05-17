@@ -6,6 +6,8 @@
               [micircle.views :as views]
               [micircle.config :as config]))
 
+(enable-console-print!)
+
 (when config/debug?
   (println "dev mode"))
 

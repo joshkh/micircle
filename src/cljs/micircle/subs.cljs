@@ -16,3 +16,9 @@
   :app-db
   (fn [db]
     (reaction @db)))
+
+
+(re-frame/register-sub
+  :view-nodes
+  (fn [db]
+    (reaction (-> @db :view :nodes))))
