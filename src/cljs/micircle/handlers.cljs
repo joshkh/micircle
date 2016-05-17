@@ -17,7 +17,6 @@
     (re-frame/dispatch [:shape-data])
     (re-frame/dispatch [:calculate-pieces])
     (re-frame/dispatch [:calculate-view])
-    (re-frame/dispatch [:generate])
     (re-frame/dispatch [:generate-defs])
     (assoc db :jamiobj data)))
 
@@ -31,7 +30,7 @@
                       {}
                       (butlast (get-in db [:jamiobj :data]))))))
 
-(def padding 0)
+(def padding 1)
 
 (defn space-around-circle [data]
   (reduce
@@ -43,6 +42,11 @@
                         :end (- (+ (:end (last total)) my-length) padding))))
 
         (conj total next))) [] data))
+
+(defn pad-segments [data]
+  (map (fn [x]
+         (assoc x :start (+ (:start x) padding)
+                  :end (- (:end x) padding))) data))
 
 (defn divide-circle [data]
   (let [total (reduce + (map (comp js/parseInt :length) data))]
@@ -61,7 +65,7 @@
 (re-frame/register-handler
   :calculate-view
   (fn [db]
-    (update-in db [:view :nodes] (comp space-text space-around-circle divide-circle))))
+    (update-in db [:view :nodes] (comp pad-segments space-text space-around-circle divide-circle))))
 
 (re-frame/register-handler
   :generate-defs

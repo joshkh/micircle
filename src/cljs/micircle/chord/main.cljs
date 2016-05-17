@@ -43,12 +43,12 @@
                                    ; SPACERS
                                    [:line.tick
                                     (let [start (utils/polar-to-cartesian 0 0 (- radius 10) (:start node))
-                                          end (utils/polar-to-cartesian 0 0 (+ radius 10) (:start node))]
+                                          end (utils/polar-to-cartesian 0 0 (+ radius 30) (:start node))]
                                       {:x1 (:x start) :y1 (:y start)
                                        :x2 (:x end) :y2 (:y end)})]
                                    [:line.tick
                                     (let [start (utils/polar-to-cartesian 0 0 (- radius 10) (:end node))
-                                          end (utils/polar-to-cartesian 0 0 (+ radius 10) (:end node))]
+                                          end (utils/polar-to-cartesian 0 0 (+ radius 30) (:end node))]
                                       {:x1 (:x start) :y1 (:y start)
                                        :x2 (:x end) :y2 (:y end)})]]) @view-nodes)))))
 
