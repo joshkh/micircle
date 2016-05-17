@@ -1,14 +1,15 @@
 (ns micircle.handlers
   (:require-macros [cljs.core.async.macros :refer [go]])
-    (:require [re-frame.core :as re-frame]
-              [micircle.db :as db]
-              [cljs-http.client :as http]
-              [cljs.core.async :refer [<!]]))
+  (:require [re-frame.core :as re-frame]
+            [micircle.db :as db]
+            [micircle.chord.utils :as utils]
+            [cljs-http.client :as http]
+            [cljs.core.async :refer [<!]]))
 
 (re-frame/register-handler
- :initialize-db
- (fn  [_ _]
-   db/default-db))
+  :initialize-db
+  (fn [_ _]
+    db/default-db))
 
 (re-frame/register-handler
   :handle-data
@@ -16,6 +17,8 @@
     (re-frame/dispatch [:shape-data])
     (re-frame/dispatch [:calculate-pieces])
     (re-frame/dispatch [:calculate-view])
+    (re-frame/dispatch [:generate])
+    (re-frame/dispatch [:generate-defs])
     (assoc db :jamiobj data)))
 
 (re-frame/register-handler
@@ -47,7 +50,7 @@
               (conj col
                     (merge next
                            {:start 0
-                            :end   (* (:length next) (/ 360 total))}))) [] data)))
+                            :end (* (:length next) (/ 360 total))}))) [] data)))
 
 (defn space-text [data]
   (reduce
@@ -61,6 +64,18 @@
     (update-in db [:view :nodes] (comp space-text space-around-circle divide-circle))))
 
 (re-frame/register-handler
+  :generate-defs
+  (fn [db]
+    (let [nodes (get-in db [:view :nodes])]
+      (assoc-in db [:view :defs]
+                (into [] (map (fn [node]
+                                {:id (:interactorRef node)
+                                 :d (utils/describe-arc 0 0 180
+                                                        (:start node)
+                                                        (:end node))})
+                              nodes))))))
+
+(re-frame/register-handler
   :load-data
   (fn [db]
     (go (let [result (<! (http/get "demo.json" {:with-credentials? false}))]
@@ -71,7 +86,7 @@
   :calculate-pieces
   (fn [db]
     (let [participants (-> db :jamiobj :data last :participants)
-          interactors (:interactors db)]
+          interactors  (:interactors db)]
       (assoc-in db [:view :nodes]
                 (into []
                       (map (fn [participant]

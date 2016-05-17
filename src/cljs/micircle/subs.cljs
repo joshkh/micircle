@@ -17,6 +17,10 @@
   (fn [db]
     (reaction @db)))
 
+(re-frame/register-sub
+  :view-defs
+  (fn [db]
+    (reaction (-> @db :view :defs))))
 
 (re-frame/register-sub
   :view-nodes

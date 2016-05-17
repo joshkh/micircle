@@ -3,14 +3,7 @@
             [micircle.chord.utils :as utils]
             [micircle.chord.globals :as globals]))
 
-(def data [{:length 90}
-           {:length 45}
-           {:length 45}])
-
 (def radius 150)
-(def padding 10)
-
-
 
 (def link-group
   (fn []
@@ -35,26 +28,34 @@
                                    [:path
                                     (assoc globals/arc
                                       :d (utils/describe-arc 0 0 radius
-                                                             (:start node)
-                                                             (:end node)))]
+                                                                  (:start node)
+                                                                  (:end node)))]
                                    [:text.participant
-                                    (merge (utils/polarToCartesian 0 0 (+ 20 radius) (:text-position node))
-                                           {:class (if (<= 180 (:text-position node)) "right" "left")})
-                                    (:label node)]
+                                    [:textPath
+                                     {:startOffset "50%"
+                                      :xlinkHref (str "#" (:interactorRef node))}
+                                     (:label node)]]
                                    [:line.tick
-                                    (let [start (utils/polarToCartesian 0 0 (- radius 10) (:start node))
-                                          end (utils/polarToCartesian 0 0 (+ radius 20) (:start node))]
+                                    (let [start (utils/polar-to-cartesian 0 0 (- radius 10) (:start node))
+                                          end (utils/polar-to-cartesian 0 0 (+ radius 10) (:start node))]
                                       {:x1 (:x start) :y1 (:y start)
                                        :x2 (:x end) :y2 (:y end)})]
                                    [:line.tick
-                                    (let [start (utils/polarToCartesian 0 0 (- radius 10) (:end node))
-                                          end (utils/polarToCartesian 0 0 (+ radius 20) (:end node))]
+                                    (let [start (utils/polar-to-cartesian 0 0 (- radius 10) (:end node))
+                                          end (utils/polar-to-cartesian 0 0 (+ radius 10) (:end node))]
                                       {:x1 (:x start) :y1 (:y start)
                                        :x2 (:x end) :y2 (:y end)})]]) @view-nodes)))))
+
+
+(defn defs []
+  (let [view-defs (re-frame/subscribe [:view-defs])]
+    (fn []
+      (into [:defs] (map (fn [def] [:path def]) @view-defs)))))
 
 (defn svg []
   (fn []
     [:svg.micircle
+     [defs]
      [:g.centered (utils/center 800 500)
       [link-group]
       [arc-group]]]))

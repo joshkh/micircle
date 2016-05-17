@@ -8,4 +8,5 @@
     (fn []
       [:div
        [chord/main]
-       [:div (json-html/edn->hiccup (-> @app-db :view :nodes))]])))
+       [:div (json-html/edn->hiccup (-> @app-db :view))]
+       ])))
