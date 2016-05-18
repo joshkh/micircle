@@ -28,6 +28,11 @@
               (reduce (fn [total next]
                         (assoc total (keyword (:id next)) next))
                       {}
+                      (butlast (get-in db [:jamiobj :data])))
+              :features
+              (reduce (fn [total next]
+                        (assoc total (keyword (:id next)) next))
+                      {}
                       (butlast (get-in db [:jamiobj :data]))))))
 
 (def padding 1)
@@ -56,16 +61,12 @@
                            {:start 0
                             :end (* (:length next) (/ 360 total))}))) [] data)))
 
-(defn space-text [data]
-  (reduce
-    (fn [total next]
-      (conj total (assoc next :text-position (/ (+ (:start next) (:end next)) 2)))) [] data))
 
 
 (re-frame/register-handler
   :calculate-view
   (fn [db]
-    (update-in db [:view :nodes] (comp pad-segments space-text space-around-circle divide-circle))))
+    (update-in db [:view :nodes] (comp pad-segments space-around-circle divide-circle))))
 
 (re-frame/register-handler
   :generate-defs
