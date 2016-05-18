@@ -74,7 +74,7 @@
     (let [nodes (get-in db [:view :nodes])]
       (assoc-in db [:view :defs]
                 (into [] (map (fn [node]
-                                {:id (:interactorRef node)
+                                {:id (:uuid node)
                                  :d (utils/describe-arc 0 0 175
                                                         (:start node)
                                                         (:end node))})
@@ -95,7 +95,8 @@
       (assoc-in db [:view :nodes]
                 (into []
                       (map (fn [participant]
-                             (assoc participant :length
+                             (assoc participant :uuid (gensym)
+                                                :length
                                                 (get-in interactors [(keyword (:interactorRef participant)) :length])
                                                 :label
                                                 (get-in interactors [(keyword (:interactorRef participant)) :label])))

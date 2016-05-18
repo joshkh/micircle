@@ -30,21 +30,15 @@
                           (let [[feature-start feature-end] (clojure.string/split (:pos sequence-data) "-")]
                             [:g
                              [:line.tick
-                              (let [start (utils/polar-to-cartesian 0 0 (- radius 20) (scale feature-start) )
+                              (let [start (utils/polar-to-cartesian 0 0 (- radius 100) (scale feature-start) )
                                     end (utils/polar-to-cartesian 0 0 radius (scale feature-start))]
                                 {:x1 (:x start) :y1 (:y start)
                                  :x2 (:x end) :y2 (:y end)})]
                              [:line.tick
-                              (let [start (utils/polar-to-cartesian 0 0 (- radius 20) (scale feature-end))
+                              (let [start (utils/polar-to-cartesian 0 0 (- radius 100) (scale feature-end))
                                     end (utils/polar-to-cartesian 0 0 radius (scale feature-end))]
                                 {:x1 (:x start) :y1 (:y start)
-                                 :x2 (:x end) :y2 (:y end)})]])) (:sequenceData feature))
-
-                   ) (:features node))))
-    ; SPACERS
-
-
-    ))
+                                 :x2 (:x end) :y2 (:y end)})]])) (:sequenceData feature))) (:features node))))))
 
 (defn arc-group []
   (let [view-nodes (re-frame/subscribe [:view-nodes])]
@@ -63,7 +57,7 @@
                                    [:text.participant
                                     [:textPath
                                      {:startOffset "50%"
-                                      :xlinkHref (str "#" (:interactorRef node))}
+                                      :xlinkHref (str "#" (:uuid node))}
                                      (:label node)]]
 
                                    ; SPACERS
