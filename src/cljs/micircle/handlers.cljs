@@ -18,6 +18,7 @@
     (re-frame/dispatch [:calculate-pieces])
     (re-frame/dispatch [:calculate-view])
     (re-frame/dispatch [:generate-defs])
+    (re-frame/dispatch [:calculate-links])
     (assoc db :jamiobj data)))
 
 (re-frame/register-handler
@@ -79,6 +80,13 @@
                                                         (:start node)
                                                         (:end node))})
                               nodes))))))
+
+
+(re-frame/register-handler
+  :calculate-links
+  (fn [db]
+    (let [nodes (get-in db [:view :nodes])])
+    db))
 
 (re-frame/register-handler
   :load-data
