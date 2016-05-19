@@ -6,20 +6,12 @@
 
 (def radius 150)
 
-(def link-group
-  (fn []
-    [:g.link-group
-     [:path.link {:d (utils/describe-link 0 0 radius
-                                          10 20
-                                          130 160)}]
-
-     [:path.link {:d (utils/describe-link 0 0 radius
-                                          40 90
-                                          200 210)}]
-
-     [:path.link {:d (utils/describe-link 0 0 radius
-                                          20 30
-                                          240 290)}]]))
+(defn link-group []
+  (let [links (re-frame/subscribe [:view-links])]
+    (fn []
+     [:g.link-group
+      (doall (for [l @links]
+         [:path.link {:d l}]))])))
 
 (defn features []
   (fn [node]
@@ -72,7 +64,7 @@
                                    ;   {:x1 (:x start) :y1 (:y start)
                                    ;    :x2 (:x end) :y2 (:y end)})]
 
-                                   [features node]
+                                   ;[features node]
 
                                    ]) @view-nodes)))))
 

@@ -26,3 +26,8 @@
   :view-nodes
   (fn [db]
     (reaction (-> @db :view :nodes))))
+
+(re-frame/register-sub
+  :view-links
+  (fn [db]
+    (reaction (-> @db :view :links))))

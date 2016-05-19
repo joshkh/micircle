@@ -3,7 +3,9 @@
   (:require [re-frame.core :as re-frame]
             [micircle.db :as db]
             [micircle.chord.utils :as utils]
+            [micircle.utils :as u]
             [cljs-http.client :as http]
+            [com.rpl.specter :as s]
             [cljs.core.async :refer [<!]]))
 
 (re-frame/register-handler
@@ -16,10 +18,18 @@
   (fn [db [_ data]]
     (re-frame/dispatch [:shape-data])
     (re-frame/dispatch [:calculate-pieces])
+
     (re-frame/dispatch [:calculate-view])
+    (re-frame/dispatch [:intify])
     (re-frame/dispatch [:generate-defs])
     (re-frame/dispatch [:calculate-links])
     (assoc db :jamiobj data)))
+
+(re-frame/register-handler
+  :intify
+  (fn [db] (->> db
+                (s/transform [:view :nodes s/ALL :features s/ALL :id] #(js/parseInt %))
+                (s/transform [:view :nodes s/ALL :features s/ALL :linkedFeatures s/ALL] #(js/parseInt %)))))
 
 (re-frame/register-handler
   ; Associate a map of interactors by id to app db
@@ -60,9 +70,7 @@
               (conj col
                     (merge next
                            {:start 0
-                            :end (* (:length next) (/ 360 total))}))) [] data)))
-
-
+                            :end   (* (:length next) (/ 360 total))}))) [] data)))
 
 (re-frame/register-handler
   :calculate-view
@@ -76,17 +84,45 @@
       (assoc-in db [:view :defs]
                 (into [] (map (fn [node]
                                 {:id (:uuid node)
-                                 :d (utils/describe-arc 0 0 175
-                                                        (:start node)
-                                                        (:end node))})
+                                 :d  (utils/describe-arc 0 0 175
+                                                         (:start node)
+                                                         (:end node))})
                               nodes))))))
 
+(defn get-nodes-with-features
+  "Return nodes that have features with an id.
+  The :linkedFeatures key will only contain the matching features."
+  [nodes id]
+  (->> nodes
+       (s/select [s/ALL (s/selected? :features s/ALL :id #(= id %))])
+       (s/transform [s/ALL :features] #(filter (fn [feature] (= id (:id feature))) %))))
+
+(defn zero-if-nan [[x y]]
+  [(if (js/isNaN x) 0 x)
+   (if (js/isNaN y) 0 y)])
+
+(defn calculate-link-path [from-feature to-feature]
+  (let [from-feature-scale (u/radial-scale [0 (:length from-feature)] [(:start from-feature) (:end from-feature)])
+        to-feature-scale (u/radial-scale [0 (:length to-feature)] [(:start to-feature) (:end to-feature)])
+        from-pos (u/parse-pos (-> from-feature :features first :sequenceData first :pos))
+        to-pos (u/parse-pos (-> to-feature :features first :sequenceData first :pos))]
+    (let [[x1 y1] (zero-if-nan (map (partial from-feature-scale) from-pos))
+          [x2 y2] (zero-if-nan (map (partial to-feature-scale) to-pos))]
+      (utils/describe-link 0 0 150 x1 y1 x2 y2))))
 
 (re-frame/register-handler
   :calculate-links
   (fn [db]
-    (let [nodes (get-in db [:view :nodes])])
-    db))
+    (let [nodes (get-in db [:view :nodes])]
+      (assoc-in db [:view :links]
+                (into [] (mapcat
+                           (fn [node]
+                             (map (fn [feature]
+                                    (calculate-link-path
+                                      (assoc node :features [feature])
+                                      (first (get-nodes-with-features
+                                               nodes
+                                               (-> feature :linkedFeatures first))))) (:features node))) nodes))))))
 
 (re-frame/register-handler
   :load-data
@@ -99,7 +135,7 @@
   :calculate-pieces
   (fn [db]
     (let [participants (-> db :jamiobj :data last :participants)
-          interactors  (:interactors db)]
+          interactors (:interactors db)]
       (assoc-in db [:view :nodes]
                 (into []
                       (map (fn [participant]

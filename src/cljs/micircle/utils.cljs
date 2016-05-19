@@ -4,3 +4,6 @@
   (fn [input]
     (let [percent (/ input (- upper-domain lower-domain))]
       (+ lower-range (* percent (- upper-range lower-range))))))
+
+(defn parse-pos [pos]
+  (map js/parseInt (clojure.string/split pos "-")))
