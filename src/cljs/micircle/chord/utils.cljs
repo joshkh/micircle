@@ -32,14 +32,18 @@
 (defn describe-arc
   "Build an SVG path that describes a circular arc. Arcs are drawn clockwise
   or counter-clockwise to remain upright (useful for things like textpaths)."
-  [x y radius start-angle end-angle]
+  [x y radius start-angle end-angle & [upright?]]
+  (println "sees upright" upright?)
   (let [start     (polar-to-cartesian x y radius start-angle)
         end       (polar-to-cartesian x y radius end-angle)]
     (let [diff (- end-angle start-angle)]
-      (cond
-        (<= 91 diff 270)
+      (if upright?
+        (cond
+         (<= 91 diff 270)
+         (clojure.string/join " " ["M" (:x end) (:y end)
+                                   "A" radius radius 0 0 0 (:x start) (:y start)])
+         :else
+         (clojure.string/join " " ["M" (:x start) (:y start)
+                                   "A" radius radius 0 0 1 (:x end) (:y end)]))
         (clojure.string/join " " ["M" (:x end) (:y end)
-                                  "A" radius radius 0 0 0 (:x start) (:y start)])
-        :else
-        (clojure.string/join " " ["M" (:x start) (:y start)
-                                  "A" radius radius 0 0 1 (:x end) (:y end)])))))
+                                  "A" radius radius 0 0 0 (:x start) (:y start)])))))

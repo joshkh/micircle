@@ -86,8 +86,25 @@
                                 {:id (:uuid node)
                                  :d  (utils/describe-arc 0 0 175
                                                          (:start node)
-                                                         (:end node))})
+                                                         (:end node)
+                                                         true)})
                               nodes))))))
+
+
+
+;http://www.uniprot.org/uniprot/?format=tab&query=accession:P16234&columns=length
+
+(defn protein-length
+  "Fetches the length of a protein."
+  [accession]
+  (go
+    (let [response (<! (http/get (str "http://www.uniprot.org/uniprot/?format=tab&query=accession:"
+                                   accession
+                                   "&columns=length")
+                              {:with-credentials? false}))]
+      (-> response :body (clojure.string/split-lines) last))))
+
+(go (println "THE LENGTH" (<! (protein-length "P16234"))))
 
 (defn get-nodes-with-features
   "Return nodes that have features with an id.
@@ -102,12 +119,18 @@
    (if (js/isNaN y) 0 y)])
 
 (defn calculate-link-path [from-feature to-feature]
+  ;(println "from feature" from-feature)
+  ;(println "to feature" to-feature)
   (let [from-feature-scale (u/radial-scale [0 (:length from-feature)] [(:start from-feature) (:end from-feature)])
         to-feature-scale (u/radial-scale [0 (:length to-feature)] [(:start to-feature) (:end to-feature)])
         from-pos (u/parse-pos (-> from-feature :features first :sequenceData first :pos))
         to-pos (u/parse-pos (-> to-feature :features first :sequenceData first :pos))]
+    ;(println "from-pos" from-pos)
+    ;(println "to-pos" to-pos)
     (let [[x1 y1] (zero-if-nan (map (partial from-feature-scale) from-pos))
           [x2 y2] (zero-if-nan (map (partial to-feature-scale) to-pos))]
+      ;(println "x1" x1 "y1" y1)
+      ;(println "x2" x2 "y2" y2)
       (utils/describe-link 0 0 150 x1 y1 x2 y2))))
 
 (re-frame/register-handler

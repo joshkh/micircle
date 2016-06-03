@@ -19,7 +19,8 @@
   :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"
                                     "test/js"]
 
-  :figwheel {:css-dirs     ["resources/public/css"] 
+  :figwheel {:css-dirs     ["resources/public/css"]
+             :server-port 5001
              :ring-handler micircle.handler/handler }
 
 
