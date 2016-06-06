@@ -1,8 +1,8 @@
+
 {
   "data": [
     {
       "id": "uniprotkb_P01127",
-      "length": "241",
       "identifier": {
         "db": "uniprotkb",
         "id": "P01127"
@@ -22,7 +22,6 @@
     },
     {
       "id": "uniprotkb_P16234",
-      "length": "1089",
       "identifier": {
         "db": "uniprotkb",
         "id": "P16234"
@@ -42,7 +41,6 @@
     },
     {
       "id": "uniprotkb_P09619",
-      "length": "1106",
       "identifier": {
         "db": "uniprotkb",
         "id": "P09619"

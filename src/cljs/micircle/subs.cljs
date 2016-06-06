@@ -31,3 +31,8 @@
   :view-links
   (fn [db]
     (reaction (-> @db :view :links))))
+
+(re-frame/register-sub
+  :ready?
+  (fn [db]
+    (reaction (:ready? @db))))

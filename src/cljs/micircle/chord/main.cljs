@@ -9,9 +9,8 @@
 (defn link-group []
   (let [links (re-frame/subscribe [:view-links])]
     (fn []
-      [:g.link-group
-       (doall (for [l @links]
-                [:path.link {:d l}]))])))
+      (into [:g.link-group] (for [l @links]
+                              [:path.link {:d l}])))))
 
 (defn features []
   (fn [node]
@@ -83,7 +82,14 @@
       [link-group]
       [arc-group]]]))
 
-(defn main []
+(defn loading []
   (fn []
-    [:div
-     [svg]]))
+    [:h1 "loading..."]))
+
+(defn main []
+  (let [ready? (re-frame/subscribe [:ready?])]
+    (fn []
+     [:div
+      (if @ready?
+        [svg]
+        [loading])])))
