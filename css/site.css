@@ -95,9 +95,59 @@ th.jh-key {
   font-size: small;
 }
 body {
-  color: red;
+  color: white;
   background: #2D2D2D;
   background: #00aeef;
+  font-family: Helvetica, Arial, Sans-Serif;
+}
+ul {
+  list-style-type: none;
+}
+ul li {
+  display: inline;
+}
+.button {
+  overflow: hidden;
+  width: 100px;
+  margin: 10px;
+  padding: 12px 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 60ms ease-in-out;
+  text-align: center;
+  white-space: nowrap;
+  text-decoration: none !important;
+  text-transform: none;
+  text-transform: capitalize;
+  color: #fff;
+  border: 0 none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 160px;
+}
+.button:hover {
+  transition: all 60ms ease;
+  opacity: .85;
+}
+.button:active {
+  transition: all 60ms ease;
+  transform: scale(0.97);
+  opacity: .75;
+}
+.button.-blue {
+  color: #ffffff;
+  background: #2b90d9;
+}
+.button.-blue.active {
+  background: white;
+  color: black;
 }
 svg.micircle {
   width: 800px;
@@ -109,14 +159,17 @@ svg.micircle g.arc path {
   stroke-width: 20;
 }
 svg.micircle g.arc line.tick {
-  stroke-width: 5;
+  stroke-width: 1;
   stroke: yellow;
-  stroke: #00aeef;
+  stroke: red;
+  stroke: white;
 }
 svg.micircle g.arc text.participant {
   fill: white;
   dominant-baseline: central;
   font-family: Helvetica, Arial, Sans-Serif;
+  text-anchor: middle;
+  font-size: 0.8em;
 }
 svg.micircle g.arc text.participant.right {
   text-anchor: start;
