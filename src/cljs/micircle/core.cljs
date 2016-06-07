@@ -4,12 +4,9 @@
               [micircle.handlers]
               [micircle.subs]
               [micircle.views :as views]
-              [micircle.config :as config]
-              [devtools.core :as devtools]))
+              [micircle.config :as config]))
 
 (enable-console-print!)
-
-(devtools/install!)
 
 (when config/debug?
   (println "dev mode"))

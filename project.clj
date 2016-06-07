@@ -7,8 +7,7 @@
                  [ring "1.4.0"]
                  [cljs-http "0.1.40"]
                  [json-html "0.3.9"]
-                 [com.rpl/specter "0.10.0"]
-                 [binaryage/devtools "0.6.1"]]
+                 [com.rpl/specter "0.10.0"]]
 
   :min-lein-version "2.5.3"
 
