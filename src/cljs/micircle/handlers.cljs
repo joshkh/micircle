@@ -71,6 +71,9 @@
 
 
 (defn calculate-link-path [from-feature to-feature]
+  (println "CALC LINK PATH")
+  (println "from feature" from-feature)
+  (println "to feature" to-feature)
   (let [from-feature-scale (u/radial-scale [0 (:length from-feature)]
                                            [(:start from-feature) (:end from-feature)])
         to-feature-scale   (u/radial-scale [0 (:length to-feature)]
@@ -79,12 +82,21 @@
         to-pos             (u/parse-pos (-> to-feature :features first :sequenceData first :pos))]
 
     (let [[x1 y1] (if (js/isNaN (first from-pos))
-                    [(:start to-feature) (+ 2 (:start to-feature))]
+                    [(:start from-feature) (+ 2 (:start from-feature))]
                     (map (partial from-feature-scale) from-pos))
           [x2 y2] (if (js/isNaN (first to-pos))
-                    [(:start from-feature) (+ 2 (:start from-feature))]
+                    [(:start to-feature) (+ 2 (:start to-feature))]
                     (zero-if-nan (map (partial to-feature-scale) to-pos)))]
+
+      (println "x1" x1 "y1" y1 "x2" x2 "y2" y2)
       (utils/describe-link 0 0 150 x1 y1 x2 y2))))
+
+;
+;(let [[x1 y1] (zero-if-nan (map (partial from-feature-scale) from-pos))
+;      [x2 y2] (zero-if-nan (map (partial to-feature-scale) to-pos))]
+;  ;(println "x1" x1 "y1" y1)
+;  ;(println "x2" x2 "y2" y2)
+;  (utils/describe-link 0 0 150 x1 y1 x2 y2))
 
 (defn view-calculate-links [db]
   (let [nodes (get-in db [:view :nodes])]
@@ -97,6 +109,25 @@
                                     (first (get-nodes-with-features
                                              nodes
                                              (-> feature :linkedFeatures first))))) (:features node))) nodes)))))
+
+
+; Walk through each feature of a node and look at the sequence data
+
+
+
+; Draw an arc from the sequence data's start and end point to the start and end point of the sequence data in the linked feature
+
+
+
+;(defn view-calculate-links [db]
+;  (let [nodes (get-in db [:view :nodes])]
+;    (println
+;      (map (fn [node]
+;             (map (fn [feature]
+;                    (println "has feature" (:sequenceData feature))
+;                    feature) (:features node))) nodes))
+;    )
+;  db)
 
 (defn generate-textpath-defs [db]
   (let [nodes (get-in db [:view :nodes])]

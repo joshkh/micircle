@@ -55,6 +55,5 @@
   :profiles
   {:dev
    {:plugins [[lein-figwheel "0.5.3"]
-              [lein-doo "0.1.6"]
-              ]
+              [lein-doo "0.1.6"]]
     }})
