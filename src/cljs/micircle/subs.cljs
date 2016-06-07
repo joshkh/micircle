@@ -36,3 +36,9 @@
   :ready?
   (fn [db]
     (reaction (:ready? @db))))
+
+(re-frame/register-sub
+  :complex-id
+  (fn [db]
+    (reaction (:complex-id @db))))
+

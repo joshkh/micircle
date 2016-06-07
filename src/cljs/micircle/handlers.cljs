@@ -1,6 +1,6 @@
 (ns micircle.handlers
   (:require-macros [cljs.core.async.macros :refer [go]])
-  (:require [re-frame.core :as re-frame]
+  (:require [re-frame.core :as re-frame :refer [trim-v]]
             [micircle.db :as db]
             [micircle.chord.utils :as utils]
             [micircle.utils :as u]
@@ -163,10 +163,17 @@
 
 ; "http://www.ebi.ac.uk/intact/complex-ws/export/EBI-9008420"
 ; "http://www.ebi.ac.uk/intact/complex-ws/export/EBI-9082861"
+
 (re-frame/register-handler
-  :load-data
+  :set-complex-id trim-v
+  (fn [db [id]]
+    (re-frame/dispatch [:load-data])
+    (assoc db :complex-id id)))
+
+(re-frame/register-handler
+  :load-data trim-v
   (fn [db]
-    (go (let [result (:body (<! (http/get "http://www.ebi.ac.uk/intact/complex-ws/export/EBI-9082861" {:with-credentials? false})))]
+    (go (let [result (:body (<! (http/get (str "http://www.ebi.ac.uk/intact/complex-ws/export/" (:complex-id db)) {:with-credentials? false})))]
 
           ; Create a list of all interactors
           (let [interactor-ids (s/select [:data s/ALL :identifier :id some?] result)]
