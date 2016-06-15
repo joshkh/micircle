@@ -1,7 +1,8 @@
 (ns micircle.views
   (:require [re-frame.core :as re-frame]
             [micircle.chord.main :as chord]
-            [json-html.core :as json-html]))
+            [json-html.core :as json-html]
+            [micircle.math.views :as math]))
 
 
 (defn chooser []
@@ -18,6 +19,12 @@
     (fn []
       [:div
        [chooser]
+       [math/main]
        [chord/main]
+
        ;[:div (json-html/edn->hiccup (-> @app-db :view))]
        ])))
+
+
+
+

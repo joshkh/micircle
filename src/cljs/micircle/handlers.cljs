@@ -71,9 +71,9 @@
 
 
 (defn calculate-link-path [from-feature to-feature]
-  (println "CALC LINK PATH")
-  (println "from feature" from-feature)
-  (println "to feature" to-feature)
+  ;(println "CALC LINK PATH")
+  ;(println "from feature" from-feature)
+  ;(println "to feature" to-feature)
   (let [from-feature-scale (u/radial-scale [0 (:length from-feature)]
                                            [(:start from-feature) (:end from-feature)])
         to-feature-scale   (u/radial-scale [0 (:length to-feature)]
@@ -88,7 +88,7 @@
                     [(:start to-feature) (+ 2 (:start to-feature))]
                     (zero-if-nan (map (partial to-feature-scale) to-pos)))]
 
-      (println "x1" x1 "y1" y1 "x2" x2 "y2" y2)
+      ;(println "x1" x1 "y1" y1 "x2" x2 "y2" y2)
       (utils/describe-link 0 0 150 x1 y1 x2 y2))))
 
 ;

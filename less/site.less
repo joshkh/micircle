@@ -141,3 +141,50 @@ svg.micircle {
         stroke: hotpink;
     }
 }
+
+
+
+svg.matrix {
+
+    g {
+        circle.guide {
+            fill: none;
+            stroke-width: 1;
+            stroke: white;
+        }
+
+        circle.anchor {
+            fill: #00aeef;
+            fill: hotpink;
+            stroke-width: 1;
+            stroke: white;
+        }
+    }
+}
+
+
+
+div.matrix {
+    width: 150px;
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid white;
+    div.row {
+        display: flex;
+        flex-direction: row;
+        flex: 1 0 auto;
+        div.cell {
+            flex: 1 0 auto;
+            background: pink;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            &.true {
+                        background: hotpink;
+                    }
+        }
+
+
+    }
+}
