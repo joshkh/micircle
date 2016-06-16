@@ -17,10 +17,13 @@
 (defn main-panel []
   (let [app-db (re-frame/subscribe [:app-db])]
     (fn []
-      [:div
+      [:section.grid
        [chooser]
        [math/main]
        [chord/main]
+
+       [:section.grid [:div "one"] [:div "two"]]
+       [:button "TESTING"]
 
        ;[:div (json-html/edn->hiccup (-> @app-db :view))]
        ])))

@@ -33,7 +33,6 @@
   "Build an SVG path that describes a circular arc. Arcs are drawn clockwise
   or counter-clockwise to remain upright (useful for things like textpaths)."
   [x y radius start-angle end-angle & [upright?]]
-  (println "sees upright" upright?)
   (let [start     (polar-to-cartesian x y radius start-angle)
         end       (polar-to-cartesian x y radius end-angle)]
     (let [diff (- end-angle start-angle)]
