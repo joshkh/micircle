@@ -7,7 +7,8 @@
                  [ring "1.4.0"]
                  [cljs-http "0.1.40"]
                  [json-html "0.3.9"]
-                 [com.rpl/specter "0.10.0"]]
+                 [com.rpl/specter "0.10.0"]
+                 [net.mikera/core.matrix "0.52.1"]]
 
   :min-lein-version "2.5.3"
 
