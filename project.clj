@@ -22,7 +22,7 @@
 
   :figwheel {:css-dirs     ["resources/public/css"]
              :server-port 5001
-             :ring-handler micircle.handler/handler }
+             :ring-handler micircle.handler/handler}
 
 
   :less {:source-paths ["less"]
@@ -50,11 +50,11 @@
      :source-paths ["src/cljs" "test/cljs"]
      :compiler     {:output-to     "resources/public/js/compiled/test.js"
                     :main          micircle.runner
-                    :optimizations :none}}
-    ]}
+                    :optimizations :none}}]}
+
 
   :profiles
   {:dev
    {:plugins [[lein-figwheel "0.5.3"]
-              [lein-doo "0.1.6"]]
-    }})
+              [lein-doo "0.1.6"]]}})
+

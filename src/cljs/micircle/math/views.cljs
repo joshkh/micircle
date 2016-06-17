@@ -12,37 +12,69 @@
             [clojure.core.matrix.selection :refer [sel where]]))
 
 
+(defn permutations [s]
+  (lazy-seq
+    (if (seq (rest s))
+      (apply concat (for [x s]
+                      (map #(cons x %) (permutations (remove #{x} s)))))
+      [s])))
+
+
+(def entities (reagent/atom [:a :b :c :d :e :f]))
+
+(def connections [[:b :d] [:a :c]])
+
+(defn pack-matrix []
+  (println "packing matrix"))
+
+(defn get-index [col e] (first (keep-indexed (fn [idx entity] (if (= entity e) idx)) col)))
+
+(defn between?
+  "Does n fall between (non-inclusive) the min and max of the values in vector v?"
+  [v n] (apply < (interpose n ((juxt first last) (sort v)))))
+
+(defn within?
+  "Does n fall within the min and max of the values in vector v?"
+  [v n] (apply <= (interpose n ((juxt first last) (sort v)))))
+
+(defn on?
+  "Is n equal to the min or max of the values in vector v?"
+  [v n] (some? (some true? (map (partial = n) ((juxt first last) (sort v))))))
+
+(defn distance
+  "The distance between the min and max of the values in vector v."
+  [v]
+  (apply - (reverse ((juxt first last) (sort v)))))
+
+(defn crosses?
+  "True if [x1 y1] crosses over [x2 y2]."
+  [pos1 pos2]
+  (not (if (or (on? pos1 (first pos2)) (on? pos1 (second pos2)))
+         true ; claw graph
+         (if (between? pos1 (first pos2))
+           (within? pos1 (second pos2))
+           (not (between? pos1 (second pos2)))))))
+
+(defn cost
+  "Determines the number of crosses in a given matrix."
+  [entities edges]
+  (/ (count
+       (filter true?
+               (mapcat (fn [next-edge]
+                         (let [pos (into [] (map (partial get-index entities) next-edge))]
+                           (map (fn [n]
+                                  (let [tmp (into [] (map (partial get-index entities) n))]
+                                    (crosses? pos tmp))) edges))) edges)))
+     2))
 
 
 
 
-(def entities (reagent/atom [:a :b :c :d :e :f :g :h]))
 
-(def connections [[:a :b]
-                  [:g :d]
-                  [:f :h]])
+;(println "the cost" (cost @entities connections))
 
-(defn get-index [col e]
-  (first (keep-indexed (fn [idx entity] (if (= entity e) idx)) col)))
-
-
-(defn cost [entities connections]
-  (map (fn [connection]
-
-         (let [from-idx (get-index entities (first connection))
-               to-idx   (get-index entities (second connection))]
-
-           (println "comparing" from-idx to-idx)
-
-           (some (fn [an-edge]
-                    (let [tmp-from-idx (get-index entities (first (sort an-edge)))
-                          tmp-to-idx (get-index entities (second (sort an-edge)))]
-                      (println "------ with" tmp-from-idx tmp-to-idx)
-                      (println "------ ? " (> from-idx tmp-from-idx)))) connections)
-
-           )) connections))
-
-(println "the cost" (cost @entities connections))
+;(println "ALL" (apply min (map (fn [permutation]
+;                       (cost permutation connections)) (permutations @entities))))
 
 ;(println "MATRIX" (matrix/matrix [:a :b :c :d :e :f :g :h]))
 
@@ -92,7 +124,7 @@
   [data]
   (reduce (fn [col next]
             (conj col {:label next
-                       :angle (* (inc (count col)) (/ 360 (count data)))})) [] data))
+                       :angle (+ 0 (* (inc (count col)) (/ 360 (count data))))})) [] data))
 
 (defn place-entities-on-plane
   "Map entities around a circular using their known angle"
@@ -156,8 +188,10 @@
 
 
 (defn xer []
-  (swap! tmatrix (fn [x] (matrix/rotate x [1 1])))
-  (swap! entities (fn [x] (matrix/rotate x [1]))))
+  (println "perms" (count (permutations @entities)))
+  ;(swap! tmatrix (fn [x] (matrix/rotate x [1 1])))
+  ;(swap! entities (fn [x] (matrix/rotate x [1])))
+  )
 
 (defn rotater []
   [:div.button.-blue.center {:on-click xer} "test"])

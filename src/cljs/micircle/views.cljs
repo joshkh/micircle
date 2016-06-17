@@ -23,10 +23,10 @@
        [chord/main]
 
        [:section.grid [:div "one"] [:div "two"]]
-       [:button "TESTING"]
+       [:button "TESTING"]])))
 
        ;[:div (json-html/edn->hiccup (-> @app-db :view))]
-       ])))
+
 
 
 
