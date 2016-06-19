@@ -2,8 +2,10 @@
 
 body {
     color:white;
+    color: black;
     background: #2D2D2D;
     background: #00aeef;
+    background: #efefef;
     font-family: Helvetica, Arial, Sans-Serif;
 }
 
@@ -142,7 +144,9 @@ svg.micircle {
     }
 }
 
-
+@line-color: #4c715b;
+@node-color: #26A65B;
+@circle-color: #a0a0a0;
 
 svg.matrix {
 
@@ -150,28 +154,28 @@ svg.matrix {
         circle.guide {
             fill: none;
             stroke-width: 1;
-            stroke: white;
+            stroke: @circle-color;
         }
 
         g.nodes {
             circle {
                 fill: #00aeef;
-                fill: hotpink;
+                fill: @node-color;
                 stroke-width: 1;
-                stroke: white;
+                stroke: @line-color;
             }
         }
 
         g.lines {
             line {
-                stroke: white;
+                stroke: @line-color;
                 stroke-width: 1;
             }
         }
 
         g.labels {
             text {
-                fill: white;
+                fill: @line-color;
             }
         }
     }
@@ -180,11 +184,11 @@ svg.matrix {
 
 
 div.matrix {
-    width: 150px;
-    height: 150px;
+    width: 200px;
+    height: 200px;
     display: flex;
     flex-direction: column;
-    border: 1px solid white;
+    border: 1px solid @circle-color;
     div.row {
         display: flex;
         flex-direction: row;
@@ -192,15 +196,25 @@ div.matrix {
         div.cell {
             transition: all 0.2s ease-in;
             flex: 1 0 auto;
-            background: pink;
+            background: #bedcca;
             display: flex;
             justify-content: center;
             align-items: center;
             &.true {
-                        background: hotpink;
+                        background: @node-color;
                     }
         }
 
 
     }
+}
+
+
+div.row {
+  display: flex;
+}
+
+div.col {
+  flex: 0 0 auto;
+  align-self: center;
 }
