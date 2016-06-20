@@ -6,6 +6,7 @@
             [micircle.utils :as u]
             [cljs-http.client :as http]
             [com.rpl.specter :as s]
+            [clojure.core.matrix :as matrix]
             [cljs.core.async :as async :refer [<!]]))
 
 (re-frame/register-handler
@@ -14,6 +15,12 @@
     db/default-db))
 
 (def padding 1)
+
+(defn get-index
+  "Finds the index of an item in a collection or nil if not found."
+  [col e] (first (keep-indexed (fn [idx entity] (if (= entity e) idx)) col)))
+
+
 
 
 (defn view-calculate-features [data]
@@ -27,7 +34,7 @@
                (fn [start-degree end-degree length sequence-data]
                  (if (= "?-?" (:pos sequence-data))
                    (assoc sequence-data :start start-degree :end (+ 1 start-degree))
-                   (let [pos (u/parse-pos (:pos sequence-data))
+                   (let [pos   (u/parse-pos (:pos sequence-data))
                          scale (u/radial-scale [0 length] [start-degree end-degree])
                          [x y] (map (partial scale) pos)]
                      (assoc sequence-data :start x :end y))))
@@ -174,17 +181,56 @@
                               {}
                               (butlast (get-in db [:jamiobj :data])))))
 
+
+(defn interaction? [e]
+  (= "interaction" (:object e)))
+
+
+(defn features [data]
+  (s/select [:data s/ALL interaction? :participants s/ALL :features s/ALL] data))
+
+(defn feature [features id]
+  (filter (fn [x]
+            (println x)
+            (= (:id x) id)) features))
+
+
+(defn index-map [feature-ids]
+  (reduce #(assoc % %2 (get-index feature-ids %2)) {} feature-ids))
+
+(defn square-matrix [size fill]
+  (into [] (repeat size (into [] (repeat size fill)))))
+
+(defn feature-matrix [features]
+  (let [indices  (index-map (map :id features))
+        m        (square-matrix (count features) nil)]
+    (reduce (fn [total next]
+              (reduce (fn [total linked-feature]
+                        (assoc-in total [(get indices (:id next)) (get indices linked-feature)] true))
+                      total (:linkedFeatures next))) m features)))
+
+(defn build-matrix [db data]
+  (println "buildings mtrix")
+  (assoc db :matrix (feature-matrix (features data))))
+
 (defn handle-all
   [db data]
+  ;(println "MATRIsX" (feature-matrix (features data)))
   (->> data
-       (assoc db :jamiobj)
-       convert-strings-to-ints
-       parse-interactors-and-features
-       view-parse-nodes
-       view-calculate-nodes
-       view-calculate-features
-       generate-textpath-defs
-       view-calculate-links))
+       ;(assoc db :testing)
+       (build-matrix db)
+       ;(assoc db :jamiobj)
+       ;build-matrix
+       ;convert-strings-to-ints
+       ;parse-interactors-and-features
+       ;view-parse-nodes
+       ;view-calculate-nodes
+       ;view-calculate-features
+       ;generate-textpath-defs
+       ;view-calculate-links
+       ))
+
+
 
 (re-frame/register-handler
   :handle-data
