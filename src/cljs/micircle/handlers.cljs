@@ -218,7 +218,7 @@
   ;(println "MATRIsX" (feature-matrix (features data)))
   (->> data
        ;(assoc db :testing)
-       (build-matrix db)
+       ;(build-matrix db)
        ;(assoc db :jamiobj)
        ;build-matrix
        ;convert-strings-to-ints
@@ -228,7 +228,7 @@
        ;view-calculate-features
        ;generate-textpath-defs
        ;view-calculate-links
-       ))
+       ) db)
 
 
 

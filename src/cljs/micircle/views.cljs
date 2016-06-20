@@ -21,8 +21,9 @@
       [:div
        [:section.grid
         [chooser]
-        ;[math/main]
-        [chord/main]]
+        [math/main]
+        ;[chord/main]
+        ]
        [:div (json-html/edn->hiccup @app-db)]])))
 
 
