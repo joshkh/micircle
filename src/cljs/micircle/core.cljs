@@ -19,7 +19,7 @@
   (re-frame/dispatch-sync [:initialize-db])
   (mount-root))
 
-;(re-frame/dispatch [:set-complex-id "EBI-9082861"])
+(re-frame/dispatch [:set-complex-id "EBI-9082861"])
 
 
 

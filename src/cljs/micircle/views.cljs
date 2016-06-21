@@ -12,17 +12,20 @@
       [:li.button.-blue.center {:on-click #(re-frame/dispatch [:set-complex-id "EBI-9082861"])
                                 :class (if (= "EBI-9082861" @complex-id) "active")} "EBI-9082861"]
       [:li.button.-blue.center {:on-click #(re-frame/dispatch [:set-complex-id "EBI-9008420"])
-                                :class (if (= "EBI-9008420" @complex-id) "active")} "EBI-9008420"]])))
+                                :class (if (= "EBI-9008420" @complex-id) "active")} "EBI-9008420"]
+      [:li.button.-blue.center {:on-click #(re-frame/dispatch [:set-complex-id "EBI-9696567"])
+                                :class (if (= "EBI-9696567" @complex-id) "active")} "EBI-9696567"]
+      [:li.button.-blue.center {:on-click #(re-frame/dispatch [:set-complex-id "EBI-11509704"])
+                                :class (if (= "EBI-11509704" @complex-id) "active")} "EBI-11509704"]])))
 
 (defn main-panel []
   (let [app-db (re-frame/subscribe [:app-db])]
     (fn []
-      (println "db" @app-db)
       [:div
        [:section.grid
         [chooser]
         [math/main]
-        ;[chord/main]
+        [chord/main]
         ]
        [:div (json-html/edn->hiccup @app-db)]])))
 

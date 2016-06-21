@@ -210,25 +210,26 @@
                       total (:linkedFeatures next))) m features)))
 
 (defn build-matrix [db data]
-  (println "buildings mtrix")
   (assoc db :matrix (feature-matrix (features data))))
 
 (defn handle-all
   [db data]
+  (println "t" (feature-matrix (features data)))
+  (println "m" (map :id (features data)))
   ;(println "MATRIsX" (feature-matrix (features data)))
   (->> data
        ;(assoc db :testing)
        ;(build-matrix db)
-       ;(assoc db :jamiobj)
+       (assoc db :jamiobj)
        ;build-matrix
-       ;convert-strings-to-ints
-       ;parse-interactors-and-features
-       ;view-parse-nodes
-       ;view-calculate-nodes
-       ;view-calculate-features
-       ;generate-textpath-defs
-       ;view-calculate-links
-       ) db)
+       convert-strings-to-ints
+       parse-interactors-and-features
+       view-parse-nodes
+       view-calculate-nodes
+       view-calculate-features
+       generate-textpath-defs
+       view-calculate-links
+       ))
 
 
 
