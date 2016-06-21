@@ -2,7 +2,7 @@
 
 body {
     color:white;
-    color: black;
+    // color: black;
     background: #2D2D2D;
     background: #00aeef;
     background: #efefef;
@@ -145,9 +145,10 @@ svg.micircle {
     }
 }
 
-@line-color: #4c715b;
-@node-color: #26A65B;
+@line-color: white;
+@node-color: #00aeef;
 @circle-color: #a0a0a0;
+
 
 svg.matrix {
 
@@ -185,28 +186,24 @@ svg.matrix {
 
 
 div.matrix {
-    width: 200px;
-    height: 200px;
+    width: 300px;
+    height: 300px;
     display: flex;
     flex-direction: column;
-    border: 1px solid @circle-color;
+    background: #3F3F3F;
     div.row {
         display: flex;
         flex-direction: row;
-        flex: 1 0 auto;
+        flex: 1 0;
         div.cell {
+            border: 1px solid #2F2F2F;
             transition: all 0.2s ease-in;
-            flex: 1 0 auto;
-            background: #bedcca;
+            flex: 1 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            &.true {
-                        background: @node-color;
-                    }
+            &.true { background: @node-color;}
         }
-
-
     }
 }
 
@@ -218,4 +215,9 @@ div.row {
 div.col {
   flex: 0 0 auto;
   align-self: center;
+}
+
+.stressed {
+  // font-style: italic;
+  background: black;
 }

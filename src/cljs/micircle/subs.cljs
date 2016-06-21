@@ -42,3 +42,8 @@
   (fn [db]
     (reaction (:complex-id @db))))
 
+(re-frame/register-sub
+  :data
+  (fn [db]
+    (reaction (:data @db))))
+

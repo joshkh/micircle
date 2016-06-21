@@ -200,8 +200,7 @@
       [:circle.guide {:r 150}]
       [lines data]
       [nodes data]
-      [labels data]
-      ]]))
+      [labels data]]]))
 
 
 (defn xer [a]
@@ -223,24 +222,21 @@
 ;[:a :b :c :d :e :f :g :h :i]
 ;[:a :e :b :d :g :f :c]
 [:a :e :b :d :g :f :c :h :i]
-;(def matrix1 (reagent/atom {:entities    [:a :b :c :d :e :f :g]
-;                            :connections [[:a :e]
-;                                          [:b :d]
-;                                          [:c :f]
-;                                          [:b :e]
-;                                          [:e :g]
-;                                          [:a :c]
-;                                          [:f :e]
-;                                          [:f :a]]}))
-
-;[:b :f :e :d :a :c :g]
-
-(def matrix1 (reagent/atom {:entities    [:a :b :c :d :e :f :g]
+(def matrix1 (reagent/atom {:entities    [:a :d :c :e :g :b :f]
                             :connections [[:a :d]
                                           [:b :f]
                                           [:c :d]
-                                          [:c :e]
-                                          [:e :g]]}))
+                                          [:e :g]
+                                          [:c :e]]}))
+
+;[:b :f :e :d :a :c :g]
+
+;(def matrix1 (reagent/atom {:entities    [:a :b :c :d :e :f :g]
+;                            :connections [[:a :d]
+;                                          [:b :f]
+;                                          [:c :d]
+;                                          [:c :e]
+;                                          [:e :g]]}))
 (swap! matrix1 (fn [a] (assoc a :matrix (build-matrix (:entities a) (:connections a)))))
 
 (defn edges-share-vertex?

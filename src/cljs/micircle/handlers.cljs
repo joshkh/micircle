@@ -51,10 +51,9 @@
 
         (conj total next))) [] data))
 
-(defn pad-segments [data]
-  (map (fn [x]
-         (assoc x :start (+ (:start x) padding)
-                  :end (- (:end x) padding))) data))
+(defn pad-segment [padding x]
+  (assoc x :start (+ (:start x) padding)
+           :end (- (:end x) padding)))
 
 (defn divide-circle [data]
   (let [total (reduce + (map (comp js/parseInt :length) data))]
@@ -153,8 +152,7 @@
        (s/transform [:view :nodes s/ALL :features s/ALL :id] #(js/parseInt %))
        (s/transform [:view :nodes s/ALL :features s/ALL :linkedFeatures s/ALL] #(js/parseInt %))))
 
-(defn view-calculate-nodes [db]
-  (update-in db [:view :nodes] (comp pad-segments space-around-circle divide-circle)))
+
 
 (defn view-parse-nodes [db]
   (let [participants (-> db :jamiobj :data last :participants)
@@ -185,9 +183,19 @@
 (defn interaction? [e]
   (= "interaction" (:object e)))
 
+(defn interactor? [e]
+  (= "interactor" (:object e)))
+
+
 
 (defn features [data]
   (s/select [:data s/ALL interaction? :participants s/ALL :features s/ALL] data))
+
+(defn participants [data]
+  (s/select [:data s/ALL interaction? :participants s/ALL] data))
+
+(defn interactors [data]
+  (s/select [:data s/ALL interactor?] data))
 
 (defn feature [features id]
   (filter (fn [x]
@@ -202,45 +210,67 @@
   (into [] (repeat size (into [] (repeat size fill)))))
 
 (defn feature-matrix [features]
-  (let [indices  (index-map (map :id features))
+  (let [vertices (map :id features)
+        indices  (index-map vertices)
         m        (square-matrix (count features) nil)]
-    (reduce (fn [total next]
-              (reduce (fn [total linked-feature]
-                        (assoc-in total [(get indices (:id next)) (get indices linked-feature)] true))
-                      total (:linkedFeatures next))) m features)))
+    (-> {}
+        (assoc :matrix (reduce (fn [total next]
+                                 (reduce (fn [total linked-feature]
+                                           (assoc-in total [(get indices (:id next)) (get indices linked-feature)] true))
+                                         total (:linkedFeatures next))) m features)
+               :vertices vertices
+               :indices indices))))
 
-(defn build-matrix [db data]
-  (assoc db :matrix (feature-matrix (features data))))
+
 
 (defn handle-all
   [db data]
-  (println "t" (feature-matrix (features data)))
-  (println "m" (map :id (features data)))
-  ;(println "MATRIsX" (feature-matrix (features data)))
-  (->> data
-       ;(assoc db :testing)
-       ;(build-matrix db)
-       (assoc db :jamiobj)
-       ;build-matrix
-       convert-strings-to-ints
-       parse-interactors-and-features
-       view-parse-nodes
-       view-calculate-nodes
-       view-calculate-features
-       generate-textpath-defs
-       view-calculate-links
-       ))
+  (println "handling data")
+  (-> db
+      (assoc :raw data)
+      (assoc :data (feature-matrix (features data)))
+      (assoc :interactors (interactors data))
+      (assoc :participants (participants data))
+      (assoc :features (features data))
+
+      ;convert-strings-to-ints
+      ;parse-interactors-and-features
+      ;view-parse-nodes
+      ;view-calculate-nodes
+      ;view-calculate-features
+      ;generate-textpath-defs
+      ;view-calculate-links
+      ))
 
 
+(defn interactor [db id]
+  (s/select-one [:interactors (s/filterer #(= (:id %) id)) s/ALL] db))
+
+
+(re-frame/register-handler
+  :calculate-view
+  (fn [db]
+    (-> db
+        ; Copy our nodes
+        (assoc-in [:view :nodes] (map #(select-keys % [:id :interactorRef]) (:participants db)))
+
+        ; Ensure that each participant's view has a length
+        (update-in [:view :nodes] (partial map (fn [node] (assoc node :length (count (:sequence (interactor db (:interactorRef node))))))))
+
+        ; Space the nodes around a circle according to their length
+        (update-in [:view :nodes] divide-circle)
+
+        (update-in [:view :nodes] space-around-circle)
+
+        (update-in [:view :nodes] (partial map (partial pad-segment 10)))
+
+        )))
 
 (re-frame/register-handler
   :handle-data
   (fn [db [_ data]]
+    (re-frame/dispatch [:calculate-view])
     (handle-all db data)))
-
-
-; "http://www.ebi.ac.uk/intact/complex-ws/export/EBI-9008420"
-; "http://www.ebi.ac.uk/intact/complex-ws/export/EBI-9082861"
 
 (re-frame/register-handler
   :set-complex-id trim-v
