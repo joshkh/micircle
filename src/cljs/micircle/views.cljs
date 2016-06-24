@@ -2,7 +2,8 @@
   (:require [re-frame.core :as re-frame]
             [micircle.chord.main :as chord]
             [json-html.core :as json-html]
-            [micircle.math.views :as math]))
+            [micircle.math.views :as math]
+            [micircle.hyperview.views :as hyperview]))
 
 
 (defn chooser []
@@ -37,6 +38,8 @@
   (let [app-db (re-frame/subscribe [:app-db])]
     (fn []
       [:div
+       [:div.row
+        [hyperview/main]]
        [:div.row
         [:section [chooser]]]
        [:div.row
