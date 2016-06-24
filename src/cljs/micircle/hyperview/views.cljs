@@ -9,7 +9,7 @@
             [micircle.chord.utils :as utils]))
 
 (def pi (.-PI js/Math))
-(def theta 2.79253)
+(def theta pi)
 
 (def model {:label    "A"
             :children [{:label    "B"
@@ -51,13 +51,32 @@
   (str "translate(" x "," y ")"))
 
 (defn radial-parition [index total]
-  (/ (* 2 pi (inc index)) total))
+  (println "NEXT ANGLE" (/ (* 2 pi index) total))
+  (/ (* 2 pi index) total))
 
 (defn center-at-zero [tree]
   (assoc tree :x 0 :y 0))
 
+(defn fan-child-old [idx total]
+  (println "fan total idx" idx total)
+  (- pi
+     (+ (/ theta
+           2)
+        (/ (* theta idx)
+           total)
+        (/ theta
+           (* 2 total)))))
+
 (defn fan-child [idx total]
-  (- 3.14 (+ (/ theta 2) (/ (* theta idx) total) (/ theta (* 2 total)))))
+  (let [total 3
+        theta pi
+        slice-size (/ theta total)]
+
+    (println "FANNED" slice-size))
+
+  )
+
+
 
 (defn radiate-children [radius children]
   (map-indexed
@@ -87,12 +106,12 @@
 
 
 (defn doit [tree]
-  (println "DOIT" tree)
+  ;(println "DOIT" tree)
   (let [u (assoc tree :touched true)]
     (if-let [children (:children tree)]
       (let [angled-children (map-indexed
                               (fn [idx child]
-                                (assoc child :angle (fan-child idx (count children))))
+                                (assoc child :angle (fan-child (inc idx) (count children))))
                               children)]
         (assoc u :children (map doit angled-children)))
       u))
@@ -125,7 +144,9 @@
                [:g {:transform (translate (:x child) (:y child))}
                 [:circle.node {:r 5}]
                 [:circle.guide {:r (:arc-radius child)}]
-                [:text.lbl (:label child)]]) (:children tree))))
+                [:text.lbl (:label child)]
+                ;(map (partial [:g]) (:children child))
+                ]) (:children tree))))
 
 ;(println "hiccupify" (hiccupify [:g {:transform (translate 0 0)}] tree))
 
