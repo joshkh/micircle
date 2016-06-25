@@ -9,7 +9,7 @@
             [micircle.chord.utils :as utils]))
 
 (def pi (.-PI js/Math))
-(def theta pi)
+(def theta 2)
 
 (def model {:label    "A"
             :children [{:label    "B"
@@ -18,12 +18,18 @@
                                    {:label    "B2"
                                     :children nil}
                                    {:label    "B3"
+                                    :children [{:label    "BB1"
+                                                :children nil}
+                                               {:label    "BB2"
+                                                :children nil}]}
+                                   {:label    "B4"
                                     :children nil}]}
                        {:label    "C"
-                        :children nil}
+                        :children [{:label    "C1"
+                                    :children nil}
+                                   {:label    "C2"
+                                    :children nil}]}
                        {:label    "D"
-                        :children nil}
-                       {:label    "E"
                         :children nil}]})
 
 
@@ -31,7 +37,7 @@
 (def globals (reagent/atom {:width  500
                             :height 500
                             :r      50
-                            :theta  2.79253}))
+                            :theta  2.4}))
 
 (defn distance
   "Euclidean distance between 2 points"
@@ -51,32 +57,14 @@
   (str "translate(" x "," y ")"))
 
 (defn radial-parition [index total]
-  (println "NEXT ANGLE" (/ (* 2 pi index) total))
   (/ (* 2 pi index) total))
 
 (defn center-at-zero [tree]
   (assoc tree :x 0 :y 0))
 
-(defn fan-child-old [idx total]
-  (println "fan total idx" idx total)
-  (- pi
-     (+ (/ theta
-           2)
-        (/ (* theta idx)
-           total)
-        (/ theta
-           (* 2 total)))))
-
-(defn fan-child [idx total]
-  (let [total 3
-        theta pi
-        slice-size (/ theta total)]
-
-    (println "FANNED" slice-size))
-
-  )
-
-
+(defn fan-child
+  ([idx total] (fan-child 0 idx total))
+  ([trajectory idx total] (+ trajectory (- (* idx (/ theta (dec total))) (/ theta 2)))))
 
 (defn radiate-children [radius children]
   (map-indexed
@@ -86,80 +74,54 @@
 
 (defn containment-arcs [tree]
   (let [children (:children tree)]
-    (assoc tree :children (map-indexed (fn [index child]
-                                         (let [neighbour (nth children (if (= index (dec (count children))) (dec index) (inc index)))
-                                               mid-angle (/ (+ (:angle child) (:angle neighbour)) 2)
-                                               midpoint  (polar-to-cartesian 0 0 100 mid-angle)
-                                               d         (distance [(:x child) (:y child)] [(:x midpoint) (:y midpoint)])]
-
-                                           (assoc child :arc-radius d))) children))))
-
-(defn handle-children [tree]
-  (if-let [children (:children tree)]
-    (let [spaced-children (map-indexed (fn [idx child]
-                                         (println "child" child) child)
-                                       children)]
-      ;(println "spaced-children" spaced-children)
-      (assoc tree :children (map handle-children children))
-      children)
-    ))
-
+    (assoc tree :children
+                (map-indexed (fn [index child]
+                               (let [neighbour (nth children (if (= index (dec (count children))) (dec index) (inc index)))
+                                     mid-angle (/ (+ (:angle child) (:angle neighbour)) 2)
+                                     midpoint  (polar-to-cartesian 0 0 (:arc-radius tree) mid-angle)
+                                     d         (distance [(:x child) (:y child)] [(:x midpoint) (:y midpoint)])]
+                                 (assoc child :arc-radius d))) children))))
 
 (defn doit [tree]
-  ;(println "DOIT" tree)
-  (let [u (assoc tree :touched true)]
+  (let [u (containment-arcs (assoc tree :touched true))]
     (if-let [children (:children tree)]
       (let [angled-children (map-indexed
                               (fn [idx child]
-                                (assoc child :angle (fan-child (inc idx) (count children))))
+                                (let [ang (fan-child (:angle tree) idx (count children))]
+                                  (println "child" child)
+                                  (println "arc-radius" (:arc-radius tree))
+                                  (merge (assoc child :angle ang) (polar-to-cartesian 0 0 (:arc-radius tree) ang))))
                               children)]
-        (assoc u :children (map doit angled-children)))
-      u))
-  )
+        (containment-arcs (assoc u :children (map doit angled-children))))
+      u)))
 
 (defn doa [tree]
   (update tree :children (partial map doit)))
 
-
 (defn space-children-around-circle [tree]
   (-> tree
       center-at-zero
-      (update :children (partial radiate-children 100))
-      ;doit
-      ))
-
-
+      (update :children (partial radiate-children 60))))
 
 (def tree (-> model
               space-children-around-circle
               containment-arcs
               doa))
 
-
-
-
-(defn hiccupify [root tree]
-  (into root
-        (map (fn [child]
-               [:g {:transform (translate (:x child) (:y child))}
-                [:circle.node {:r 5}]
-                [:circle.guide {:r (:arc-radius child)}]
-                [:text.lbl (:label child)]
-                ;(map (partial [:g]) (:children child))
-                ]) (:children tree))))
-
-;(println "hiccupify" (hiccupify [:g {:transform (translate 0 0)}] tree))
+(defn hiccupify [tree]
+  (into [:g {:transform (translate (:x tree) (:y tree))}]
+        [[:circle.node {:r 5}]
+         [:circle.guide {:r (:arc-radius tree)}]
+         [:text.lbl (:label tree)]
+         (map hiccupify (:children tree))]))
 
 (defn radiator []
   (fn [t]
-    (hiccupify [:g {:transform (translate 0 0)}] t)))
-
-
-;(println "coordinates" (map (partial polar-to-cartesian 0 0 100) (calculate-coordinates [1 2])))
+    (into [:g {:transform (translate 0 0)}] (hiccupify t))))
 
 (defn guide []
   (fn []
-    [:circle.guide {:r 100}]))
+    [:circle.guide {:r 60}]))
 
 (defn svg []
   (fn []
@@ -171,7 +133,6 @@
 
 (defn main []
   [:div
-   ;[:h3 "Hyperview"]
    [svg]
    [:div (json-html/edn->hiccup tree)]])
 
