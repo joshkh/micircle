@@ -9,7 +9,7 @@
             [micircle.chord.utils :as utils]))
 
 (def pi (.-PI js/Math))
-(def theta (reagent/atom (/ pi 2)))
+(def theta (reagent/atom 2))
 
 (def globals {:width  300
               :height 300})
@@ -74,7 +74,7 @@
                                                 :children nil}]}]}
                        {:label    "C"
                         :children nil}
-                       {:label    "D"
+                       {:label    "Y"
                         :children nil}
                        {:label    "D"
                         :children [
@@ -170,7 +170,7 @@
       (update :children (partial map modify-tree))))
 
 (def tree (reagent/atom (-> model
-                            (assoc :containment-radius 60
+                            (assoc :containment-radius 90
                                    :containment-angle 0
                                    :angle (/ pi 2))
                             modify-tree)))
@@ -179,7 +179,7 @@
 (defn swaptree [v]
   (reset! theta v)
   (reset! tree (-> model
-                   (assoc :containment-radius 60
+                   (assoc :containment-radius 90
                           :containment-angle 0
                           :angle (/ pi 2))
                    modify-tree)))
@@ -190,10 +190,14 @@
   (into [:g {:transform (translate (:x tree) (:y tree))}]
         [[:circle.node {:r 3}]
          (if-not (empty? (:children tree))
-           [:circle.guide {:r (:containment-radius tree)}])
-         [:text.lbl (:label tree)]
+           [:circle.guide {:r (:containment-radius tree)
+                           :stroke-dasharray "1,3"}])
+         [:text.lbl {:dx 5 :dy 5} (:label tree)]
          (into [:g] (map (fn [c]
-                           [:line {:x1 0 :y1 0 :x2 (:x c) :y2 (:y c)}]) (:children tree)))
+                           [:line {:x1 0
+                                   :y1 0
+                                   :x2 (:x c)
+                                   :y2 (:y c)}]) (:children tree)))
          (into [:g] (map (fn [c] [hiccupify c tree]) (:children tree)))]))
 
 (defn radiator []
@@ -202,19 +206,19 @@
 
 (defn guide []
   (fn []
-    [:circle.guide {:r 60}]))
+    [:circle.guide {:r 90
+                    :stroke-dasharray "1,3"}]))
 
 (defn svg []
   (fn [tree]
     [:svg.hyperview
      [:g {:transform "translate(250,250)"}
-      [guide]
+      ;[guide]
       [radiator tree]]]))
 
 (defn main []
   [:div
    [:div
-    [:div.button.-blue {:on-click swaptree} "HELP"]
     [:input.form-control {:type      "range" :min 0 :max pi :step 0.1
                           :on-change (fn [e] (swaptree (.. e -target -value)))}]]
 
