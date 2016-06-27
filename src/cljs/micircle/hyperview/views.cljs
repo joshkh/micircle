@@ -58,41 +58,37 @@
 ;                       ]})
 
 
-(def model {:label    "A"
-            :children [{:label    "B"
-                        :children [{:label    "BB1"
+(def model {:label    "Gene"
+            :children [{:label    "Pathways"
+                        :children [{:label    "Proteins"
                                     :children nil}
-                                   {:label    "BB2"
-                                    :children [{:label    "BBB1"
-                                                :children [{:label    "bbbb1"
+                                   {:label    "Genes"
+                                    :children [{:label    "GO Annotations"
+                                                :children [{:label    "Evidence"
                                                             :children nil}
-                                                           {:label    "bbbb2"
+                                                           {:label    "Ontology Term"
                                                             :children nil}
-                                                           {:label    "bbbb3"
+                                                           {:label    "Data Sets"
                                                             :children nil}]}
-                                               {:label    "BBB2"
+                                               {:label    "Chromosomes"
                                                 :children nil}]}]}
-                       {:label    "C"
+                       {:label    "Organisms"
                         :children nil}
-                       {:label    "Y"
+                       {:label    "Data Sets"
                         :children nil}
-                       {:label    "D"
+                       {:label    "Diseases"
                         :children [
-                                   {:label    "DD1"
+                                   {:label    "Publications"
                                     :children nil}
-                                   {:label    "DD2"
-                                    :children nil}
-                                   {:label "DD2"
-                                    :children nil}
-                                   {:label "DD2"
+                                   {:label    "Genes"
                                     :children nil}]}
 
-                       {:label    "E"
-                        :children [{:label    "E1"
-                                    :children [{:label    "EE1"
+                       {:label    "Exons"
+                        :children [{:label    "Genes"
+                                    :children [{:label    "Organism"
                                                 :children nil}
-                                               {:label    "EE2"
-                                                :children [{:label "EEE3"}]}]}]}
+                                               {:label    "Pathways"
+                                                :children [{:label "Publications"}]}]}]}
                        ]})
 
 (defn distance
@@ -212,7 +208,7 @@
 (defn svg []
   (fn [tree]
     [:svg.hyperview
-     [:g {:transform "translate(250,250)"}
+     [:g {:transform "translate(300,300)"}
       ;[guide]
       [radiator tree]]]))
 
