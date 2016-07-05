@@ -58,38 +58,30 @@
 ;                       ]})
 
 
-(def model {:label    "Gene"
-            :children [{:label    "Pathways"
-                        :children [{:label    "Proteins"
-                                    :children nil}
-                                   {:label    "Genes"
-                                    :children [{:label    "GO Annotations"
-                                                :children [{:label    "Evidence"
-                                                            :children nil}
-                                                           {:label    "Ontology Term"
-                                                            :children nil}
-                                                           {:label    "Data Sets"
-                                                            :children nil}]}
-                                               {:label    "Chromosomes"
-                                                :children nil}]}]}
-                       {:label    "Organisms"
-                        :children nil}
-                       {:label    "Data Sets"
-                        :children nil}
-                       {:label    "Diseases"
-                        :children [
-                                   {:label    "Publications"
-                                    :children nil}
-                                   {:label    "Genes"
-                                    :children nil}]}
 
-                       {:label    "Exons"
-                        :children [{:label    "Genes"
-                                    :children [{:label    "Organism"
+(def model {:label    "A"
+            :children [{:label    "B"
+                        :children [{:label    "B1"
+                                    :children nil}
+                                   {:label    "B2"
+                                    :children nil}
+                                   {:label    "B3"
+                                    :children [{:label    "BB1"
                                                 :children nil}
-                                               {:label    "Pathways"
-                                                :children [{:label "Publications"}]}]}]}
-                       ]})
+                                               {:label    "BB2"
+                                                :children nil}]}
+                                   {:label    "B4"
+                                    :children nil}]}
+                       {:label    "C"
+                        :children [{:label    "C1"
+                                    :children nil}
+                                   {:label    "C2"
+                                    :children nil}]}
+                       {:label    "D"
+                        :children nil}]})
+
+
+
 
 (defn distance
   "Euclidean distance between 2 points"
@@ -185,9 +177,8 @@
 (defn hiccupify [tree & parent]
   (into [:g {:transform (translate (:x tree) (:y tree))}]
         [[:circle.node {:r 3}]
-         (if-not (empty? (:children tree))
-           [:circle.guide {:r (:containment-radius tree)
-                           :stroke-dasharray "1,3"}])
+         [:circle.guide {:r                (:containment-radius tree)
+                         :stroke-dasharray "1,3"}]
          [:text.lbl {:dx 5 :dy 5} (:label tree)]
          (into [:g] (map (fn [c]
                            [:line {:x1 0
@@ -202,7 +193,7 @@
 
 (defn guide []
   (fn []
-    [:circle.guide {:r 90
+    [:circle.guide {:r                90
                     :stroke-dasharray "1,3"}]))
 
 (defn svg []
