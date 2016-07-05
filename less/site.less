@@ -83,6 +83,15 @@ ul {
 }
 
 
+.ticker {
+    stroke: black;
+    opacity: 0.5;
+    stroke-width: 0.5;
+}
+
+.small-molecule {
+    fill: white;
+}
 
 svg.micircle {
     // background: #2D2D2D;
@@ -103,7 +112,7 @@ svg.micircle {
             stroke: yellow;
             // stroke: #00aeef;
             stroke: red;
-            stroke: white;
+            stroke: #98C93C;
         }
 
         text.participant {
@@ -127,9 +136,10 @@ svg.micircle {
     path.link {
         fill: white;
         fill: #72D9FF;
+        fill: #98C93C;
         opacity: 1;
         stroke-width: 1px;
-        stroke: #00aeef;
+        stroke: darken(#98C93C, 30%);
         stroke-opacity: 0.5;
 
         &:hover {
@@ -148,6 +158,8 @@ svg.micircle {
 @line-color: white;
 @node-color: #00aeef;
 @circle-color: #a0a0a0;
+
+
 
 
 svg.matrix {

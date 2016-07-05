@@ -261,7 +261,7 @@
 ;(println (overlapping? [:a :b :c :d :e :f :g] [:a :c] [:c :f]))
 
 (defn untangle [matrix]
-  (println "untangling")
+  ;(println "untangling")
   (loop [entities [:a :b :c :d :e :f :g] idx 0]
     (mapcat (fn [edge1] (filter (fn [edge2]
                                   (overlapping? entities edge1 edge2)) (:connections @matrix1))) (:connections @matrix1))))
@@ -269,7 +269,7 @@
 
 
 
-(println "untangled" (untangle @matrix1))
+;(println "untangled" (untangle @matrix1))
 ;(println "main-diagonal" (matrix/main-diagonal (:matrix @matrix1)))
 
 ;(println "lowest cost" (into [] (first (filter (fn [perm] (= 0 (cost perm (:connections @matrix1)))) (permutations (:entities @matrix1))))))

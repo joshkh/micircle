@@ -36,13 +36,17 @@
   (let [start     (polar-to-cartesian x y radius start-angle)
         end       (polar-to-cartesian x y radius end-angle)]
     (let [diff (- end-angle start-angle)]
-      (if upright?
-        (cond
-         (<= 91 diff 270)
-         (clojure.string/join " " ["M" (:x end) (:y end)
-                                   "A" radius radius 0 0 0 (:x start) (:y start)])
-         :else
-         (clojure.string/join " " ["M" (:x start) (:y start)
-                                   "A" radius radius 0 0 1 (:x end) (:y end)]))
-        (clojure.string/join " " ["M" (:x end) (:y end)
-                                  "A" radius radius 0 0 0 (:x start) (:y start)])))))
+      (clojure.string/join " " ["M" (:x end) (:y end)
+                                "A" radius radius 0 0 0 (:x start) (:y start)]))))
+
+
+;http://gamedev.stackexchange.com/questions/31218/how-to-move-an-object-along-a-circumference-of-another-object
+(defn trim-arc [center-x center-y radius point-x point-y distance]
+  (let [current-theta (Math/atan2 (- point-x center-x) (- point-y center-y))
+        delta-theta (/ distance radius)]
+    (println "current-theta" current-theta)
+    (println "delta-theta" delta-theta)
+    (polar-to-cartesian 0 0 radius delta-theta)))
+
+
+(println "HELLO" (trim-arc 0 0 50 50 50 5))

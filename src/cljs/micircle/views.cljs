@@ -2,7 +2,8 @@
   (:require [re-frame.core :as re-frame]
             [micircle.chord.main :as chord]
             [json-html.core :as json-html]
-            [micircle.math.views :as math]))
+            [micircle.math.views :as math]
+            [com.rpl.specter :as s]))
 
 
 (defn chooser []
@@ -45,11 +46,6 @@
        ;[:div.row [math/main]]
 
        [:div (json-html/edn->hiccup (:view @app-db))]
+       [:div (json-html/edn->hiccup (:raw @app-db))]
        ])))
-
-
-
-
-
-
 

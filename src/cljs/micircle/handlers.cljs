@@ -14,7 +14,7 @@
   (fn [_ _]
     db/default-db))
 
-(def padding 1)
+
 
 (defn get-index
   "Finds the index of an item in a collection or nil if not found."
@@ -46,13 +46,13 @@
       (if-not (empty? total)
         (let [my-length (- (:end next) (:start next))]
           (conj total (assoc next
-                        :start (+ (:end (last total)) padding)
-                        :end (- (+ (:end (last total)) my-length) padding))))
+                        :start (+ (:end (last total)) 0)
+                        :end (- (+ (:end (last total)) my-length) 0))))
 
         (conj total next))) [] data))
 
 (defn pad-segment [padding x]
-  (assoc x :start (+ (:start x) padding)
+  (assoc x :start (:start x)
            :end (- (:end x) padding)))
 
 (defn divide-circle [data]
@@ -139,7 +139,8 @@
   (let [nodes (get-in db [:view :nodes])]
     (assoc-in db [:view :defs]
               (into [] (map (fn [node]
-                              {:id (:uuid node)
+                              {
+                               :id (:uuid node)
                                :d  (utils/describe-arc 0 0 175
                                                        (:start node)
                                                        (:end node)
@@ -192,7 +193,9 @@
   (s/select [:data s/ALL interaction? :participants s/ALL :features s/ALL] data))
 
 (defn participants [data]
-  (s/select [:data s/ALL interaction? :participants s/ALL] data))
+  (->>
+    (s/select [:data s/ALL interaction? :participants s/ALL] data)
+    (map (fn [p] (assoc p :uuid (gensym))))))
 
 (defn interactors [data]
   (s/select [:data s/ALL interactor?] data))
@@ -246,25 +249,34 @@
 (defn interactor [db id]
   (s/select-one [:interactors (s/filterer #(= (:id %) id)) s/ALL] db))
 
+(defn make-ticks [node]
+  (assoc node :ticks (range (:start node) (:end node) 5)))
 
 (re-frame/register-handler
   :calculate-view
   (fn [db]
     (-> db
         ; Copy our nodes
-        (assoc-in [:view :nodes] (map #(select-keys % [:id :interactorRef]) (:participants db)))
+        (assoc-in [:view :nodes] (map #(select-keys % [:features :id :uuid :interactorRef]) (:participants db)))
 
         ; Ensure that each participant's view has a length
         (update-in [:view :nodes] (partial map (fn [node] (assoc node :length (count (:sequence (interactor db (:interactorRef node))))))))
+
+        (update-in [:view :nodes] (partial map (fn [node]
+                                                 (if (= 0 (:length node))
+                                                   (assoc node :length 20 :small-molecule true)
+                                                   node))))
 
         ; Space the nodes around a circle according to their length
         (update-in [:view :nodes] divide-circle)
 
         (update-in [:view :nodes] space-around-circle)
 
-        (update-in [:view :nodes] (partial map (partial pad-segment 10)))
+        (update-in [:view :nodes] (partial map (partial pad-segment 5)))
 
-        )))
+        (update-in [:view :nodes] (partial map make-ticks))
+        generate-textpath-defs
+        view-calculate-links)))
 
 (re-frame/register-handler
   :handle-data
