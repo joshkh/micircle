@@ -9,10 +9,10 @@
             [micircle.chord.utils :as utils]))
 
 (def pi (.-PI js/Math))
-(def theta (reagent/atom 2))
+(def theta (reagent/atom 1.4))
 
-(def globals {:width  300
-              :height 300})
+(def globals {:width  250
+              :height 250})
 
 ;(def model {:label    "A"
 ;            :children [{:label    "B"
@@ -59,26 +59,93 @@
 
 
 
-(def model {:label    "A"
-            :children [{:label    "B"
-                        :children [{:label    "B1"
-                                    :children nil}
-                                   {:label    "B2"
-                                    :children nil}
-                                   {:label    "B3"
-                                    :children [{:label    "BB1"
+(def model2 {:label    "a"
+             :children [{:label    "b"
+                         :children [{:label    "c"
+                                     :children nil}
+                                    {:label    "d"
+                                     :children [{:label    "e"
+                                                 :children []}
+                                                {:label    "f"
+                                                 :children []}]}
+                                    {:label    "g"
+                                     :children [{:label    "h"
+                                                 :children [{:label    "i"
+                                                             :children nil}
+                                                            {:label    "j"
+                                                             :children [{:label    "k"
+                                                                         :children []}]}]}
+                                                {:label    "l"
+                                                 :children nil}]}
+                                    {:label    "m"
+                                     :children nil}]}
+                        {:label    "n"
+                         :children [{:label    "o"
+                                     :children nil}
+                                    {:label    "p"
+                                     :children nil}]}
+                        {:label    "q"
+                         :children nil}]})
+
+(def model {:label    "a"
+            :children [{:label    "b"
+                        :children [{:label    "f"
+                                    :children [{:label    "g"
+                                                :children [{:label    "h"
+                                                            :children []}]}]}
+                                   {:label    "g"
+                                    :children [{:label    "i"
+                                                :children []}
+                                               {:label    "j"
+                                                :children []}
+                                               {:label    "k"
+                                                :children []}]}
+                                   {:label    "h"
+                                    :children [{:label    "l"
+                                                :children []}
+                                               {:label    "m"
+                                                :children []}]}
+
+                                   {:label    "i"
+                                    :children nil}]}
+                       {:label    "c"
+                        :children [{:label    "n"
+                                    :children [{:label    "p"
                                                 :children nil}
-                                               {:label    "BB2"
+                                               {:label    "q"
                                                 :children nil}]}
-                                   {:label    "B4"
-                                    :children nil}]}
-                       {:label    "C"
-                        :children [{:label    "C1"
-                                    :children nil}
-                                   {:label    "C2"
-                                    :children nil}]}
-                       {:label    "D"
-                        :children nil}]})
+                                   {:label    "o"
+                                    :children [{:label    "r"
+                                                :children nil}]}]}
+                       {:label    "d"
+                        :children [{:label    "s"
+                                    :children [{:label    "w"
+                                                :children nil}
+                                               {:label    "x"
+                                                :children nil}
+                                               {:label    "y"
+                                                :children nil}]}
+                                   {:label    "t"
+                                    :children [{:label    "z"
+                                                :children nil}]}
+                                   {:label    "u"
+                                    :children [{:label    "0"
+                                                :children nil}
+                                               {:label    "1"
+                                                :children nil}]}]}
+                       {:label    "e"
+                        :children [{:label    "2"
+                                    :children [{:label    "5"
+                                                :children nil}]}
+                                   {:label    "3"
+                                    :children [{:label    "6"
+                                                :children nil}
+                                               {:label    "7"
+                                                :children nil}
+                                               {:label    "8"
+                                                :children nil}]}
+                                   {:label    "4"
+                                    :children nil}]}]})
 
 
 
@@ -176,9 +243,10 @@
 
 (defn hiccupify [tree & parent]
   (into [:g {:transform (translate (:x tree) (:y tree))}]
-        [[:circle.node {:r 3}]
-         [:circle.guide {:r                (:containment-radius tree)
-                         :stroke-dasharray "1,3"}]
+        [[:circle.node {:r 1}]
+         (if-not (empty? (:children tree))
+           [:circle.guide {:r                (:containment-radius tree)
+                           :stroke-dasharray "1,3"}])
          [:text.lbl {:dx 5 :dy 5} (:label tree)]
          (into [:g] (map (fn [c]
                            [:line {:x1 0
@@ -199,7 +267,7 @@
 (defn svg []
   (fn [tree]
     [:svg.hyperview
-     [:g {:transform "translate(300,300)"}
+     [:g {:transform "translate(250,250)"}
       ;[guide]
       [radiator tree]]]))
 
