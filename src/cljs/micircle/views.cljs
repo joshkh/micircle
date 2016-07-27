@@ -17,7 +17,11 @@
        [:li.button.-blue.center {:on-click #(re-frame/dispatch [:set-complex-id "EBI-9696567"])
                                  :class    (if (= "EBI-9696567" @complex-id) "active")} "EBI-9696567"]
        [:li.button.-blue.center {:on-click #(re-frame/dispatch [:set-complex-id "EBI-11509704"])
-                                 :class    (if (= "EBI-11509704" @complex-id) "active")} "EBI-11509704"]])))
+                                 :class    (if (= "EBI-11509704" @complex-id) "active")} "EBI-11509704"]
+       [:li.button.-blue.center {:on-click #(re-frame/dispatch [:set-complex-id "EBI-6554207"])
+                                 :class    (if (= "EBI-6554207" @complex-id) "active")} "EBI-6554207"]
+       [:li.button.-blue.center {:on-click #(re-frame/dispatch [:set-complex-id "EBI-9997373"])
+                                 :class    (if (= "EBI-9997373" @complex-id) "active")} "EBI-9997373"]])))
 
 (defn x-labels [verticies]
   (into [:div.row [:div.cell.stressed]] (map (fn [x] [:div.cell.stressed (str x)]) verticies)))
@@ -46,6 +50,7 @@
        ;[:div.row [math/main]]
 
        [:div (json-html/edn->hiccup (:view @app-db))]
-       [:div (json-html/edn->hiccup (:raw @app-db))]
+       [:br]
+       [:div (json-html/edn->hiccup @app-db)]
        ])))
 

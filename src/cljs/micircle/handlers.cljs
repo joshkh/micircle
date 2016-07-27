@@ -78,8 +78,9 @@
 
 (defn calculate-link-path [from-feature to-feature]
   ;(println "CALC LINK PATH")
-  ;(println "from feature" from-feature)
-  ;(println "to feature" to-feature)
+  (println "from feature" from-feature)
+  (println "to feature" to-feature)
+
   (let [from-feature-scale (u/radial-scale [0 (:length from-feature)]
                                            [(:start from-feature) (:end from-feature)])
         to-feature-scale   (u/radial-scale [0 (:length to-feature)]
@@ -257,7 +258,7 @@
   (fn [db]
     (-> db
         ; Copy our nodes
-        (assoc-in [:view :nodes] (map #(select-keys % [:features :id :uuid :interactorRef]) (:participants db)))
+        (assoc-in [:view :nodes] (map #(select-keys % [:label :features :id :uuid :interactorRef]) (:participants db)))
 
         ; Ensure that each participant's view has a length
         (update-in [:view :nodes] (partial map (fn [node] (assoc node :length (count (:sequence (interactor db (:interactorRef node))))))))
