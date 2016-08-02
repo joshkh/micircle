@@ -98,6 +98,8 @@ body {
   color: white;
   background: #2D2D2D;
   background: #00aeef;
+  background: #efefef;
+  background: #505050;
   font-family: Helvetica, Arial, Sans-Serif;
 }
 ul {
@@ -149,6 +151,22 @@ ul li {
   background: white;
   color: black;
 }
+.button.-red {
+  color: #ffffff;
+  background: darkred;
+}
+.button.-red.active {
+  background: white;
+  color: red;
+}
+.ticker {
+  stroke: black;
+  opacity: 0.5;
+  stroke-width: 0.5;
+}
+.small-molecule {
+  fill: white;
+}
 svg.micircle {
   width: 800px;
   height: 500px;
@@ -162,7 +180,7 @@ svg.micircle g.arc line.tick {
   stroke-width: 1;
   stroke: yellow;
   stroke: red;
-  stroke: white;
+  stroke: #98C93C;
 }
 svg.micircle g.arc text.participant {
   fill: white;
@@ -180,9 +198,10 @@ svg.micircle g.arc text.participant.right {
 svg.micircle path.link {
   fill: white;
   fill: #72D9FF;
+  fill: #98C93C;
   opacity: 1;
   stroke-width: 1px;
-  stroke: #00aeef;
+  stroke: #3f5517;
   stroke-opacity: 0.5;
 }
 svg.micircle path.link:hover {
@@ -193,4 +212,54 @@ svg.micircle line.marker {
   fill: none;
   stroke-width: 2px;
   stroke: hotpink;
+}
+svg.matrix g circle.guide {
+  fill: none;
+  stroke-width: 1;
+  stroke: #a0a0a0;
+}
+svg.matrix g g.nodes circle {
+  fill: #00aeef;
+  stroke-width: 1;
+  stroke: #ffffff;
+}
+svg.matrix g g.lines line {
+  stroke: #ffffff;
+  stroke-width: 1;
+}
+svg.matrix g g.labels text {
+  fill: #ffffff;
+}
+div.matrix {
+  width: 300px;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+  background: #3F3F3F;
+}
+div.matrix div.row {
+  display: flex;
+  flex-direction: row;
+  flex: 1 0;
+}
+div.matrix div.row div.cell {
+  border: 1px solid #2F2F2F;
+  transition: all 0.2s ease-in;
+  flex: 1 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+div.matrix div.row div.cell.true {
+  background: #00aeef;
+}
+div.row {
+  display: flex;
+}
+div.col {
+  flex: 0 0 auto;
+  align-self: center;
+}
+.stressed {
+  background: black;
 }
